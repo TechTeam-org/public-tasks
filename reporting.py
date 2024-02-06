@@ -124,6 +124,7 @@ def make_slack_message(format_issues: list[dict[str, str]]):
         ]
     }
 
+    format_issues.sort(key=lambda x: x["due_date"])
     for issue in format_issues:
         message["blocks"] += make_report(issue["issue_url"], issue["assignee"], issue["due_date"], issue["title"])
 
