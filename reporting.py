@@ -73,9 +73,7 @@ def get_issues():
         logger.error(response.json())
         raise Exception("Failed to get issues")
     else:
-        logger.info(response.status_code)
-        logger.info(type(response.json()))
-        logger.info(list(response.json().keys()))
+        logger.info(f"Github Response Code: {response.status_code}")
         return response.json()
 
 def make_report(issue_url: str, assignee: str, deadline: str, title: str):
@@ -119,7 +117,7 @@ def make_slack_message(format_issues: list[dict[str, str]]):
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": "締め切り通知🔥",
+                    "text": "🔥締め切り通知🔥",
                     "emoji": True
                 }
             }
@@ -136,12 +134,12 @@ def post_slack_message(message: dict) -> None:
     response = webhook.send(blocks=message["blocks"])
     if response.status_code != 200:
         logger.error("Failed to send message")
-        logger.error(response.status_code)
-        logger.error(response.body)
+        logger.error(f"slack response code: {response.status_code}")
+        logger.error(f"slack response body: {response.body}")
         raise Exception("Failed to send message")
     else:
-        logger.info(response.status_code)
-        logger.info(response.body)
+        logger.info(f"slack response code: {response.status_code}")
+        logger.info(f"slack response body: {response.body}")
 
 def main():
     """
