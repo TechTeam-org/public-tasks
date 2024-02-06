@@ -2,6 +2,7 @@ from constants import GH_TOKEN, WEBHOOK_URL, GH_PROJECT_ID
 from slack_sdk import WebhookClient
 from loguru import logger
 from jinja2 import Template
+import datetime
 import requests
 
 def graphql_format(json: dict) -> list[dict[str, str]]:
@@ -66,8 +67,7 @@ def get_issues():
     }
     """
     query = Template(query_template).render(PROJECT_ID=GH_PROJECT_ID)
-    variables = { "project" : GH_PROJECT_ID }
-    response = requests.post(url, json={'query': query, 'variables': variables }, headers=headers)
+    response = requests.post(url, json={'query': query}, headers=headers)
     if response.status_code != 200 or "errors" in response.json().keys():
         logger.error("Failed to get issues")
         logger.error(response.json())
@@ -80,7 +80,15 @@ def make_report(issue_url: str, assignee: str, deadline: str, title: str):
     """
     Slackに送信するレポートメッセージを作成する
     """
-
+    deadline_date = datetime.datetime.strptime(deadline, '%Y-%m-%d')
+    today = datetime.datetime.today()
+    timedelta = deadline_date - today
+    if timedelta.days < 0:
+        deadline = f"*{timedelta.days}日経過* :fire:"
+    elif timedelta.days == 0:
+        deadline = f"*今日まで* :warning:"
+    else:
+        return None
     return [
         {
 			"type": "section",
