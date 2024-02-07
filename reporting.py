@@ -124,7 +124,7 @@ def make_report(
                         {"type": "mrkdwn", "text": f"*締め切り:*\n{deadline}"},
                         {
                             "type": "mrkdwn",
-                            "text": f"*担当者:*\n{ASSIGNEE2SLACK_ID[assignee]}",
+                            "text": f"*担当者:*\n<@{ASSIGNEE2SLACK_ID[assignee]}>",
                         },
                     ],
                 },

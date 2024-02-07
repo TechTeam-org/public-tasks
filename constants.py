@@ -5,5 +5,5 @@ GH_TOKEN = os.environ.get("GH_TOKEN", "")
 GH_PROJECT_ID = os.environ.get("GH_PROJECT_ID", "")
 
 ASSIGNEE2SLACK_ID = {
-    "suguru-toyohara": "@豊原優",
+    "suguru-toyohara": "U06GE1X4BJ7",
 }
