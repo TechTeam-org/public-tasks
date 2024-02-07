@@ -1,4 +1,4 @@
-from constants import GH_TOKEN, WEBHOOK_URL, GH_PROJECT_ID
+from constants import GH_TOKEN, WEBHOOK_URL, GH_PROJECT_ID, ASSIGNEE2SLACK_ID
 from slack_sdk import WebhookClient
 from loguru import logger
 from jinja2 import Template
@@ -122,7 +122,10 @@ def make_report(
                     "type": "section",
                     "fields": [
                         {"type": "mrkdwn", "text": f"*締め切り:*\n{deadline}"},
-                        {"type": "mrkdwn", "text": f"*担当者:*\n{assignee}"},
+                        {
+                            "type": "mrkdwn",
+                            "text": f"*担当者:*\n{ASSIGNEE2SLACK_ID[assignee]}",
+                        },
                     ],
                 },
                 {"type": "divider"},
