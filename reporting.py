@@ -176,7 +176,7 @@ def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, l
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "締め切り直前のIssueはありません :バンザイ:",
+                            "text": "締め切り直前のIssueはありません :yattane:",
                         },
                     }
                 ]
