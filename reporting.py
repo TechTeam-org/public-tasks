@@ -95,7 +95,7 @@ def make_report(issue_url: str, assignee: str, deadline: str, title: str):
     elif timedelta.days == 0:
         deadline = f"*今日まで* :warning:"
     else:
-        return None
+        return []
     return [
         {
             "type": "section",
