@@ -94,7 +94,7 @@ def get_issues() -> dict:
 
 def make_report(
     issue_url: str, assignee: str, deadline: str, title: str, objective: str
-) -> dict[str, list]:
+) -> list[dict[str, list] | None]:
     """
     Slackに送信するレポートメッセージを作成する
     """
@@ -108,25 +108,27 @@ def make_report(
         deadline = f"*今日まで* :warning:"
     else:
         return []
-    return {
-        "blocks": [
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"【{objective}】<{issue_url}|{title}>",
+    return [
+        {
+            "blocks": [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"【{objective}】<{issue_url}|{title}>",
+                    },
                 },
-            },
-            {
-                "type": "section",
-                "fields": [
-                    {"type": "mrkdwn", "text": f"*締め切り:*\n{deadline}"},
-                    {"type": "mrkdwn", "text": f"*担当者:*\n{assignee}"},
-                ],
-            },
-            {"type": "divider"},
-        ]
-    }
+                {
+                    "type": "section",
+                    "fields": [
+                        {"type": "mrkdwn", "text": f"*締め切り:*\n{deadline}"},
+                        {"type": "mrkdwn", "text": f"*担当者:*\n{assignee}"},
+                    ],
+                },
+                {"type": "divider"},
+            ]
+        }
+    ]
 
 
 def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, list]]:
