@@ -90,8 +90,9 @@ def make_report(issue_url: str, assignee: str, deadline: str, title: str):
     deadline_date = datetime.datetime.strptime(deadline, "%Y-%m-%d")
     today = datetime.datetime.today()
     timedelta = deadline_date - today
-    if timedelta.days < 0:
-        deadline = f"*{timedelta.days}日経過* :fire:"
+    days_to_deadline = timedelta.days + 1
+    if days_to_deadline < 0:
+        deadline = f"*{abs(days_to_deadline)}日超過！すぐやれ！* :fire:"
     elif timedelta.days == 0:
         deadline = f"*今日まで* :warning:"
     else:
