@@ -1,4 +1,8 @@
-on: workflow_dispatch
+on: 
+  workflow_dispatch: []
+  pull_request:
+    branches:
+      - main
 # on:
 #   schedule:
 #     - cron: '10 10 * * *'
