@@ -14,12 +14,13 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
     nodes = json["data"]["node"]["items"]["nodes"]
     for node in nodes:
         try:
-            due_date = node["fieldValueByName"]["date"]
-            issue_url = node["fieldValueByName"]["item"]["content"]["bodyUrl"]
-            title = node["fieldValueByName"]["item"]["content"]["title"]
-            assignee = node["fieldValueByName"]["item"]["content"]["assignees"][
-                "nodes"
-            ][0]["login"]
+            due_date = node["deadlines"]["date"]
+            issue_url = node["deadlines"]["item"]["content"]["bodyUrl"]
+            title = node["deadlines"]["item"]["content"]["title"]
+            assignee = node["deadlines"]["item"]["content"]["assignees"]["nodes"][0][
+                "login"
+            ]
+            objective = node["objective"]["name"]
         except TypeError:
             continue
         format_data.append(
@@ -28,6 +29,7 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
                 "issue_url": issue_url,
                 "title": title,
                 "assignee": assignee,
+                "objective": objective,
             }
         )
 
@@ -46,7 +48,12 @@ def get_issues():
         ... on ProjectV2 {
           items(first: 100){
             nodes {
-              fieldValueByName(name: "end_date"){
+              objective: fieldValueByName(name: "Objective"){
+                ... on ProjectV2ItemFieldSingleSelectValue {
+                  name
+                }
+              }
+              deadlines: fieldValueByName(name: "end_date"){
                 ... on ProjectV2ItemFieldDateValue {
                   date
                   item {
@@ -83,7 +90,9 @@ def get_issues():
         return response.json()
 
 
-def make_report(issue_url: str, assignee: str, deadline: str, title: str):
+def make_report(
+    issue_url: str, assignee: str, deadline: str, title: str, objective: str
+):
     """
     Slackに送信するレポートメッセージを作成する
     """
@@ -100,7 +109,7 @@ def make_report(issue_url: str, assignee: str, deadline: str, title: str):
     return [
         {
             "type": "section",
-            "text": {"type": "mrkdwn", "text": f"<{issue_url}|{title}>"},
+            "text": {"type": "mrkdwn", "text": f"【{objective}】<{issue_url}|{title}>"},
         },
         {
             "type": "section",
@@ -133,7 +142,11 @@ def make_slack_message(format_issues: list[dict[str, str]]):
     format_issues.sort(key=lambda x: x["due_date"])
     for issue in format_issues:
         message["blocks"] += make_report(
-            issue["issue_url"], issue["assignee"], issue["due_date"], issue["title"]
+            issue["issue_url"],
+            issue["assignee"],
+            issue["due_date"],
+            issue["title"],
+            issue["objective"],
         )
 
     return message
@@ -158,6 +171,7 @@ def main():
     """
     format_issues = graphql_format(get_issues())
     message = make_slack_message(format_issues)
+    logger.info(message)
     post_slack_message(message)
 
 
