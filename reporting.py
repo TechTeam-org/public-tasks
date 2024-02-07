@@ -108,6 +108,12 @@ def make_report(
         deadline = f"*今日まで* :warning:"
     else:
         return []
+    
+    try:
+        slack_mention = f"<@{ASSIGNEE2SLACK_ID[assignee]}>"
+    except KeyError:
+        slack_mention = assignee
+    
     return [
         {
             "blocks": [
@@ -124,7 +130,7 @@ def make_report(
                         {"type": "mrkdwn", "text": f"*締め切り:*\n{deadline}"},
                         {
                             "type": "mrkdwn",
-                            "text": f"*担当者:*\n<@{ASSIGNEE2SLACK_ID[assignee]}>",
+                            "text": f"*担当者:*\n{slack_mention}",
                         },
                     ],
                 },
