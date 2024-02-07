@@ -108,12 +108,12 @@ def make_report(
         deadline = f"*今日まで* :warning:"
     else:
         return []
-    
+
     try:
         slack_mention = f"<@{ASSIGNEE2SLACK_ID[assignee]}>"
     except KeyError:
         slack_mention = assignee
-    
+
     return [
         {
             "blocks": [
@@ -167,6 +167,21 @@ def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, l
             issue["title"],
             issue["objective"],
         )
+
+    if messages == []:
+        messages += [
+            {
+                "blocks": [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "締め切り直前のIssueはありません :バンザイ:",
+                        },
+                    }
+                ]
+            }
+        ]
 
     return messages
 
