@@ -1,0 +1,12 @@
+venv
+# FILEPATH: /Users/for_biz-creation/github/techteam/public-tasks/.gitignore
+# BEGIN: abpxx6d04wxr
+venv
+# END: abpxx6d04wxr
+
+# Python specific
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.pyi

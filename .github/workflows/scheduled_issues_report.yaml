@@ -1,0 +1,29 @@
+on: 
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  scheduled_issues_report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.GH_APP_ID }}
+          private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: 'x64'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Python
+        run: python reporting.py
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+          GH_PROJECT_ID: ${{ secrets.GH_PROJECT_ID }}
+          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
