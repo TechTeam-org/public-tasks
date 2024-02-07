@@ -4,6 +4,7 @@ from loguru import logger
 from jinja2 import Template
 import datetime
 import requests
+import time
 
 
 def graphql_format(json: dict) -> list[dict[str, str]]:
@@ -22,6 +23,7 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
             ]
             objective = node["objective"]["name"]
         except TypeError:
+            # 期限が設定されていないIssueはスキップ
             continue
         format_data.append(
             {
@@ -36,7 +38,7 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
     return format_data
 
 
-def get_issues():
+def get_issues() -> dict:
     """
     GraphQLを使ってGitHubProjectからIssue情報を取得する
     """
@@ -92,7 +94,7 @@ def get_issues():
 
 def make_report(
     issue_url: str, assignee: str, deadline: str, title: str, objective: str
-):
+) -> dict[str, list]:
     """
     Slackに送信するレポートメッセージを作成する
     """
@@ -106,42 +108,48 @@ def make_report(
         deadline = f"*今日まで* :warning:"
     else:
         return []
-    return [
-        {
-            "type": "section",
-            "text": {"type": "mrkdwn", "text": f"【{objective}】<{issue_url}|{title}>"},
-        },
-        {
-            "type": "section",
-            "fields": [
-                {"type": "mrkdwn", "text": f"*締め切り:*\n{deadline}"},
-                {"type": "mrkdwn", "text": f"*担当者:*\n{assignee}"},
-            ],
-        },
-        {"type": "divider"},
-    ]
-
-
-def make_slack_message(format_issues: list[dict[str, str]]):
-    """
-    Slackに送信するメッセージを作成する
-    """
-    message = {
+    return {
         "blocks": [
             {
-                "type": "header",
+                "type": "section",
                 "text": {
-                    "type": "plain_text",
-                    "text": "🔥締め切り通知🔥",
-                    "emoji": True,
+                    "type": "mrkdwn",
+                    "text": f"【{objective}】<{issue_url}|{title}>",
                 },
-            }
+            },
+            {
+                "type": "section",
+                "fields": [
+                    {"type": "mrkdwn", "text": f"*締め切り:*\n{deadline}"},
+                    {"type": "mrkdwn", "text": f"*担当者:*\n{assignee}"},
+                ],
+            },
+            {"type": "divider"},
         ]
     }
 
-    format_issues.sort(key=lambda x: x["due_date"])
+
+def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, list]]:
+    """
+    Slackに連投するメッセージ群を作成する
+    """
+    messages = [
+        {
+            "blocks": [
+                {
+                    "type": "header",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "🔥締め切り通知🔥",
+                        "emoji": True,
+                    },
+                }
+            ]
+        }
+    ]
+
     for issue in format_issues:
-        message["blocks"] += make_report(
+        messages += make_report(
             issue["issue_url"],
             issue["assignee"],
             issue["due_date"],
@@ -149,7 +157,7 @@ def make_slack_message(format_issues: list[dict[str, str]]):
             issue["objective"],
         )
 
-    return message
+    return messages
 
 
 def post_slack_message(message: dict) -> None:
@@ -170,9 +178,11 @@ def main():
     メイン処理
     """
     format_issues = graphql_format(get_issues())
-    message = make_slack_message(format_issues)
-    logger.info(message)
-    post_slack_message(message)
+    format_issues.sort(key=lambda x: x["due_date"])
+    messages = make_slack_messages(format_issues)
+    for message in messages:
+        time.sleep(1)
+        post_slack_message(message)
 
 
 if __name__ == "__main__":
