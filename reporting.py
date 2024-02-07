@@ -93,7 +93,7 @@ def make_report(issue_url: str, assignee: str, deadline: str, title: str):
     days_to_deadline = timedelta.days + 1
     if days_to_deadline < 0:
         deadline = f"*{abs(days_to_deadline)}日超過！すぐやれ！* :fire:"
-    elif timedelta.days == 0:
+    elif days_to_deadline == 0:
         deadline = f"*今日まで* :warning:"
     else:
         return []
