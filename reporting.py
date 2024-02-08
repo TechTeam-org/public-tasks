@@ -100,6 +100,8 @@ def make_report(
     """
     deadline_date = datetime.datetime.strptime(deadline, "%Y-%m-%d")
     today = datetime.datetime.today()
+    logger.info(f"Today: {today.strftime('%Y-%m-%d')}")
+    logger.info(f"Deadline: {deadline}")
     timedelta = deadline_date - today
     days_to_deadline = timedelta.days + 1
     if days_to_deadline < 0:
