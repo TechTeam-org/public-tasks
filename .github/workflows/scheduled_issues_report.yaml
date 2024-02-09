@@ -2,7 +2,7 @@ on:
   workflow_dispatch:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '10 1 * * *'
+    - cron:  '28 0 * * *'
   pull_request:
     branches:
       - main
