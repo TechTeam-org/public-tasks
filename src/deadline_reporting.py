@@ -1,7 +1,7 @@
-from constants import ASSIGNEE2SLACK_ID, WF_ENV
-from post_slack_message import post_slack_message
+from .constants import ASSIGNEE2SLACK_ID, WF_ENV
+from .post_slack_message import post_slack_message
+from .github_api import get_issues
 from loguru import logger
-from github_api import get_issues
 import datetime
 import time
 

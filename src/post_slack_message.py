@@ -1,4 +1,4 @@
-from constants import WEBHOOK_URL
+from .constants import WEBHOOK_URL
 from slack_sdk import WebhookClient
 from loguru import logger
 

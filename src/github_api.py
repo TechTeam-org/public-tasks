@@ -1,8 +1,7 @@
-import requests
-from constants import GH_PROJECT_ID, GH_TOKEN
+from .constants import GH_PROJECT_ID, GH_TOKEN
 from jinja2 import Template
 from loguru import logger
-
+import requests
 
 def get_issues() -> dict:
     """
