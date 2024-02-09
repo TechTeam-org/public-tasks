@@ -113,6 +113,8 @@ def make_report(
         deadline = f"*{abs(days_to_deadline)}日超過！すぐやれ！* :fire:"
     elif days_to_deadline == 0:
         deadline = f"*今日まで* :warning:"
+    elif days_to_deadline <= 2:
+        deadline = f"*あと{days_to_deadline}日* :warning:"
     else:
         return []
 
