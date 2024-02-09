@@ -2,6 +2,7 @@ from constants import WEBHOOK_URL
 from slack_sdk import WebhookClient
 from loguru import logger
 
+
 def post_slack_message(message: dict) -> None:
     webhook = WebhookClient(WEBHOOK_URL)
     response = webhook.send(blocks=message["blocks"])

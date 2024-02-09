@@ -142,6 +142,7 @@ def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, l
 
     return messages
 
+
 def deadline_reporting():
     """
     メイン処理

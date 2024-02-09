@@ -3,6 +3,7 @@ from constants import GH_PROJECT_ID, GH_TOKEN
 from jinja2 import Template
 from loguru import logger
 
+
 def get_issues() -> dict:
     """
     GraphQLを使ってGitHubProjectからIssue情報を取得する
@@ -56,4 +57,3 @@ def get_issues() -> dict:
     else:
         logger.info(f"Github Response Code: {response.status_code}")
         return response.json()
-
