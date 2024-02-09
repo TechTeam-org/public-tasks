@@ -1,4 +1,4 @@
-from constants import GH_TOKEN, WEBHOOK_URL, GH_PROJECT_ID, ASSIGNEE2SLACK_ID
+from constants import GH_TOKEN, WEBHOOK_URL, GH_PROJECT_ID, ASSIGNEE2SLACK_ID, WF_ENV
 from slack_sdk import WebhookClient
 from loguru import logger
 from jinja2 import Template
@@ -146,6 +146,10 @@ def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, l
     """
     Slackに連投するメッセージ群を作成する
     """
+    if WF_ENV == "dev":
+        dev_message = "【テスト通知】"
+    else:
+        dev_message = ""
     messages = [
         {
             "blocks": [
@@ -153,7 +157,7 @@ def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, l
                     "type": "header",
                     "text": {
                         "type": "plain_text",
-                        "text": "🔥締め切り通知🔥",
+                        "text": f"🔥締め切り通知{dev_message}🔥",
                         "emoji": True,
                     },
                 }
