@@ -1,9 +1,8 @@
-from constants import GH_TOKEN, WEBHOOK_URL, GH_PROJECT_ID, ASSIGNEE2SLACK_ID, WF_ENV
-from slack_sdk import WebhookClient
+from constants import ASSIGNEE2SLACK_ID, WF_ENV
+from post_slack_message import post_slack_message
 from loguru import logger
-from jinja2 import Template
+from github_api import get_issues
 import datetime
-import requests
 import time
 
 
@@ -40,61 +39,6 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
         )
 
     return format_data
-
-
-def get_issues() -> dict:
-    """
-    GraphQLを使ってGitHubProjectからIssue情報を取得する
-    """
-    headers = {"Authorization": f"bearer {GH_TOKEN}"}
-    url = "https://api.github.com/graphql"
-    query_template = """
-    {
-      node(id: "{{ PROJECT_ID}}" ){
-        ... on ProjectV2 {
-          items(first: 100){
-            nodes {
-              objective: fieldValueByName(name: "Objective"){
-                ... on ProjectV2ItemFieldSingleSelectValue {
-                  name
-                }
-              }
-              deadlines: fieldValueByName(name: "end_date"){
-                ... on ProjectV2ItemFieldDateValue {
-                  date
-                  item {
-                    ... on ProjectV2Item{
-                      content {
-                        ... on Issue{
-                          bodyUrl
-                          closed
-                          title
-                          assignees(first: 1){
-                            nodes{
-                              login
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    """
-    query = Template(query_template).render(PROJECT_ID=GH_PROJECT_ID)
-    response = requests.post(url, json={"query": query}, headers=headers)
-    if response.status_code != 200 or "errors" in response.json().keys():
-        logger.error("Failed to get issues")
-        logger.error(response.json())
-        raise Exception("Failed to get issues")
-    else:
-        logger.info(f"Github Response Code: {response.status_code}")
-        return response.json()
 
 
 def make_report(
@@ -198,21 +142,7 @@ def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, l
 
     return messages
 
-
-def post_slack_message(message: dict) -> None:
-    webhook = WebhookClient(WEBHOOK_URL)
-    response = webhook.send(blocks=message["blocks"])
-    if response.status_code != 200:
-        logger.error("Failed to send message")
-        logger.error(f"slack response code: {response.status_code}")
-        logger.error(f"slack response body: {response.body}")
-        raise Exception("Failed to send message")
-    else:
-        logger.info(f"slack response code: {response.status_code}")
-        logger.info(f"slack response body: {response.body}")
-
-
-def main():
+def deadline_reporting():
     """
     メイン処理
     """
@@ -222,7 +152,3 @@ def main():
     for message in messages:
         time.sleep(1)
         post_slack_message(message)
-
-
-if __name__ == "__main__":
-    main()

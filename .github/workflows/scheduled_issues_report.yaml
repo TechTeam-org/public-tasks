@@ -37,7 +37,7 @@ jobs:
       - name: checkoutput
         run: echo ${{ steps.get_env.outputs.deploy }}
       - name: Run Python
-        run: python reporting.py
+        run: python dispatch.py
         env:
           WF_ENV: ${{ steps.get_env.outputs.deploy }} 
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
