@@ -18,12 +18,16 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
             due_date = node["deadlines"]["date"]
             issue_url = node["deadlines"]["item"]["content"]["bodyUrl"]
             title = node["deadlines"]["item"]["content"]["title"]
+            is_closed = node["deadlines"]["item"]["content"]["closed"]
             assignee = node["deadlines"]["item"]["content"]["assignees"]["nodes"][0][
                 "login"
             ]
             objective = node["objective"]["name"]
         except TypeError:
             # 期限が設定されていないIssueはスキップ
+            continue
+        if is_closed:
+            # close済みのIssueはスキップ
             continue
         format_data.append(
             {
@@ -63,6 +67,7 @@ def get_issues() -> dict:
                       content {
                         ... on Issue{
                           bodyUrl
+                          closed
                           title
                           assignees(first: 1){
                             nodes{
