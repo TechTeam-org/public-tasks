@@ -6,6 +6,7 @@ from loguru import logger
 
 args = sys.argv
 app_name = args[0]
+logger.info(app_name)
 
 if app_name == 'issue_report':
     deadline_reporting()
