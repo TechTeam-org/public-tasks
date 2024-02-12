@@ -5,7 +5,7 @@ on:
     - cron:  '28 0 * * *'
   pull_request:
     branches:
-      - feature/add_recurring_tasks
+      - main
 
 jobs:
   scheduled_issues_report:

@@ -10,5 +10,5 @@ app_name = args[0]
 if app_name == 'issue_report':
     deadline_reporting()
 else:
-    logger.Info("couldn't find application, please set valid app_name")
+    logger.info("couldn't find application, please set valid app_name")
     
