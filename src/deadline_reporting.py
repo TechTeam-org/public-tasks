@@ -145,7 +145,7 @@ def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, l
 
 def deadline_reporting():
     """
-    メイン処理
+    タスク通知のメイン処理
     """
     format_issues = graphql_format(get_issues())
     format_issues.sort(key=lambda x: x["due_date"])
@@ -153,3 +153,7 @@ def deadline_reporting():
     for message in messages:
         time.sleep(1)
         post_slack_message(message)
+
+def create_recurring_tasks():
+    "月初めに定期実行する"
+    logger.info("this is reccuring tasks")

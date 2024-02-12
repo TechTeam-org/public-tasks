@@ -1,15 +1,15 @@
 import sys
-from src.deadline_reporting import deadline_reporting
+from src.deadline_reporting import create_recurring_tasks, deadline_reporting
 from loguru import logger
 
-
-
+ISSUE_REPORT_NAME='issue_report'
+RECURRING_TASKS_NAME='recurring_tasks'
 args = sys.argv
 app_name = args[1]
-logger.info(app_name)
 
-if app_name == 'issue_report':
+if app_name == ISSUE_REPORT_NAME:
     deadline_reporting()
+elif app_name == RECURRING_TASKS_NAME:
+    create_recurring_tasks()
 else:
     logger.info("couldn't find application, please set valid app_name")
-    
