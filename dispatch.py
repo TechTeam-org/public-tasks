@@ -1,5 +1,7 @@
 import sys
-from src.deadline_reporting import create_recurring_tasks, deadline_reporting
+from src.recurring_task import create_recurring_tasks
+from src.deadline_reporting import deadline_reporting
+
 from loguru import logger
 
 ISSUE_REPORT_NAME='issue_report'

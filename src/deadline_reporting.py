@@ -154,6 +154,3 @@ def deadline_reporting():
         time.sleep(1)
         post_slack_message(message)
 
-def create_recurring_tasks():
-    "月初めに定期実行する"
-    logger.info("this is reccuring tasks")
