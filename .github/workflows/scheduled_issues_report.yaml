@@ -1,45 +1,45 @@
-# on:
-#   workflow_dispatch:
-#   schedule:
-#     # * is a special character in YAML so you have to quote this string
-#     - cron:  '28 0 * * *'
-#   pull_request:
-#     branches:
-#       - main
+on:
+  workflow_dispatch:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '28 0 * * *'
+  pull_request:
+    branches:
+      - main
 
-# jobs:
-#   scheduled_issues_report:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
-#       - name: change_environment
-#         id: get_env
-#         run: |
-#           if [[ ${{ github.event_name }} == 'schedule' ]]; then
-#             echo "deploy=prod" >> $GITHUB_OUTPUT
-#           else
-#             echo "deploy=dev" >> $GITHUB_OUTPUT
-#           fi
-#       - name: Generate token
-#         id: generate_token
-#         uses: actions/create-github-app-token@v1
-#         with:
-#           app-id: ${{ secrets.GH_APP_ID }}
-#           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-#       - name: Setup Python
-#         uses: actions/setup-python@v5
-#         with:
-#           python-version: '3.12'
-#           architecture: 'x64'
-#           cache: 'pip'
-#       - name: Install dependencies
-#         run: pip install -r requirements.txt
-#       - name: checkoutput
-#         run: echo ${{ steps.get_env.outputs.deploy }}
-#       - name: Run Python
-#         run: python dispatch.py issue_report
-#         env:
-#           WF_ENV: ${{ steps.get_env.outputs.deploy }} 
-#           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-#           GH_PROJECT_ID: ${{ secrets.GH_PROJECT_ID }}
-#           WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+jobs:
+  scheduled_issues_report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: change_environment
+        id: get_env
+        run: |
+          if [[ ${{ github.event_name }} == 'schedule' ]]; then
+            echo "deploy=prod" >> $GITHUB_OUTPUT
+          else
+            echo "deploy=dev" >> $GITHUB_OUTPUT
+          fi
+      - name: Generate token
+        id: generate_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: 'x64'
+          cache: 'pip'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: checkoutput
+        run: echo ${{ steps.get_env.outputs.deploy }}
+      - name: Run Python
+        run: python dispatch.py issue_report
+        env:
+          WF_ENV: ${{ steps.get_env.outputs.deploy }} 
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+          GH_PROJECT_ID: ${{ secrets.GH_PROJECT_ID }}
+          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
