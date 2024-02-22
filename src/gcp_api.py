@@ -2,6 +2,8 @@ import google.auth
 import google.auth.transport.requests
 import google.oauth2.id_token
 import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
 
 
 def authenticate_with_oidc():
@@ -10,6 +12,8 @@ def authenticate_with_oidc():
 
     # Google Cloudの認証情報を取得
     _, project = google.auth.default()
+    token = id_token.fetch_id_token(reqs.Request(), url)
+    wb = gspread.service_account()
 
     # ユーザーに対してブラウザを開き、認証コードを取得
     credentials, _ = google.auth.default(scopes=SCOPES)
