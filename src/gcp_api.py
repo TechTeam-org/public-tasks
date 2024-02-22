@@ -32,4 +32,4 @@ def access_spreadsheet(credentials):
     # シートのデータを取得
     sheet = spreadsheet.sheet1
     data = sheet.get_all_records()
-    print(f"Sheet Data: {data}")
+    print(f"Sheet Datas: {data}")
