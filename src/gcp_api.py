@@ -21,7 +21,7 @@ def access_spreadsheet(credentials):
     gc = gspread.authorize(credentials)
 
     # Spreadsheetを開く
-    spreadsheet = gc.open_by_key(1qakDhRcewEWcfPj23jkPYTMJjuVvlKZjApYyDDED1OU)
+    spreadsheet = gc.open_by_key('1qakDhRcewEWcfPj23jkPYTMJjuVvlKZjApYyDDED1OU')
 
     # 以下は適切な処理を実行（例：シートの取得やデータの読み書き）
 
