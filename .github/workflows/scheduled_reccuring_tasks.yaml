@@ -50,7 +50,6 @@ jobs:
         name: 'gcloud'
         run: |-
           gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
-          gcloud services list
       - name: Run Python
         run: python dispatch.py recurring_tasks
         env:
