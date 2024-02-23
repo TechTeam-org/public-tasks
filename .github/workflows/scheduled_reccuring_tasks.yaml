@@ -58,6 +58,9 @@ jobs:
           echo ${{ steps.auth.outputs.access_token }}
           echo '---------------id_token---------------'
           echo ${{ steps.auth.outputs.id_token }}
+          echo '---------------outputs---------------'
+          echo ${{ steps.auth.outputs }}
+
 
       - id: 'gcloud'
         name: 'gcloud'
