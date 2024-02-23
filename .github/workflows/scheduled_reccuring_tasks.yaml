@@ -45,6 +45,9 @@ jobs:
           create_credentials_file: 'true'
           workload_identity_provider: '/projects/337274895898/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
           service_account: 'github-actions@techteam-414109.iam.gserviceaccount.com'
+      - name: gcloud auth login by workload identity
+        run: |-
+          gcloud auth login --brief --cred-file="${{ steps.auth_stg.outputs.credentials_file_path || steps.auth_prod.outputs.credentials_file_path }}"
       - name: Run Python
         run: python dispatch.py recurring_tasks
         env:

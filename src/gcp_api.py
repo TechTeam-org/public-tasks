@@ -1,5 +1,6 @@
 import google.auth
 import google.auth.transport.requests
+import google.auth.compute_engine 
 import google.oauth2.id_token
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -9,6 +10,10 @@ from oauth2client.service_account import ServiceAccountCredentials
 def authenticate_with_oidc():
     # Google Sheets APIのスコープ
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+    request = google.auth.transport.requests.Request()
+    credentials = compute_engine.IDTokenCredentials(
+        request=request, target_audience=url, use_metadata_identity_endpoint=True
+    )
 
     # Google Cloudの認証情報を取得
     _, project = google.auth.default()
