@@ -4,6 +4,7 @@ import google.auth.compute_engine
 import google.oauth2.id_token
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from .constants import CREDENTIAL_FILE_PATH
 
 
 
@@ -16,10 +17,10 @@ def authenticate_with_oidc():
     # )
 
     # Google Cloudの認証情報を取得
-    _, project = google.auth.default()
+    # _, project = google.auth.default()
     # ユーザーに対してブラウザを開き、認証コードを取得
-    credentials, _ = google.auth.default(scopes=SCOPES)
-
+    # credentials, _ = google.auth.default(scopes=SCOPES)
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIAL_FILE_PATH, SCOPES)
     return credentials
 
 def access_spreadsheet(credentials):

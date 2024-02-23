@@ -70,3 +70,4 @@ jobs:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
           GH_PROJECT_ID: ${{ secrets.GH_PROJECT_ID }}
           WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          CREDENTIAL_FILE_PATH: ${{steps.auth.outputs.credentials_file_path }}
