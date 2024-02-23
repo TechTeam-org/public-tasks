@@ -46,6 +46,19 @@ jobs:
           create_credentials_file: 'true'
           workload_identity_provider: '/projects/337274895898/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
           service_account: 'github-actions@techteam-414109.iam.gserviceaccount.com'
+      - name: testAuth
+        run: |
+          echo '---------------projectID---------------'
+          echo ${{ steps.auth.outputs.project_id }}
+          echo '---------------credentials_file_path---------------'
+          echo ${{ steps.auth.outputs.credentials_file_path }}
+          echo '---------------auth_token---------------'
+          echo ${{ steps.auth.outputs.auth_token }}
+          echo '---------------access_token---------------'
+          echo ${{ steps.auth.outputs.access_token }}
+          echo '---------------id_token---------------'
+          echo ${{ steps.auth.outputs.id_token }}
+
       - id: 'gcloud'
         name: 'gcloud'
         run: |-
