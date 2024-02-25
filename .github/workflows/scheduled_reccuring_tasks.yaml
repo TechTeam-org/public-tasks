@@ -44,9 +44,8 @@ jobs:
         uses: google-github-actions/auth@v0.4.0
         with:
           create_credentials_file: 'true'
-          workload_identity_provider: 'iam.googleapis.com/projects/337274895898/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider '
+          workload_identity_provider: '/projects/337274895898/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider '
           service_account: 'github-actions@techteam-414109.iam.gserviceaccount.com'
-          token_format: 'access_token'
       - name: testAuth
         run: |
           echo '---------------projectID---------------'
