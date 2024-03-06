@@ -45,5 +45,4 @@ jobs:
           WF_ENV: ${{ steps.get_env.outputs.deploy }} 
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
           GH_PROJECT_ID: ${{ secrets.GH_PROJECT_ID }}
-          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           GH_OWNER: ${{ secrets.GH_OWNER }}
