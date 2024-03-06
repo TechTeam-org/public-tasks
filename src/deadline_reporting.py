@@ -22,7 +22,7 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
                 "login"
             ]
             objective = node["objective"]["name"]
-        except TypeError:
+        except (KeyError, TypeError):
             # 期限が設定されていないIssueはスキップ
             continue
         if is_closed:

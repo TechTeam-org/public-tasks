@@ -1,19 +1,23 @@
-from .github_api import get_recurring_issues, create_issue, register_v2_item, get_fields_info, update_v2_select_field, update_v2_date_field
+from .github_api import get_recurring_issues, create_issue, register_v2_item, get_fields, update_v2_select_field, update_v2_date_field
 from loguru import logger
 from .models import Issue, Status, Objective
 from datetime import datetime, timedelta
 import pytz
 
 
-def graphql_status_format(json: dict, name: str) -> Status | None:
+def graphql_status_format(json: dict, name: str) -> Status:
+  """
+  fieldの中から引数で指定したStatus(Option)を取得
+  """
   edges = json["data"]["node"]["fields"]["edges"]
-  options: len[dict[str, str]] =[{}]
-  for egde in edges:
+  options: len[dict[str, str]] =[]
+  for edge in edges:
     try:
-      if "name" in egde["node"] and egde["node"]["name"] == "Status":
-        options = egde["node"]["options"]
-    except TypeError as e:
-      # 期限が設定されていないIssueはスキップ
+      if edge["node"]["name"] == "Status":
+        options = edge["node"]["options"]
+        break
+    except (KeyError, TypeError):
+      # 　nameが取得できなかった場合を想定しskip
       continue
   for option in options:
     try:
@@ -22,10 +26,10 @@ def graphql_status_format(json: dict, name: str) -> Status | None:
           option_id=option["id"],
           name=option["name"], 
           )
-    except TypeError as e:
+    except (KeyError, TypeError):
       # 期限が設定されていないIssueはスキップ
       continue
-  return None
+  return Status()
 
 def graphql_recurring_format(json: dict) -> list[Issue]:
   """
@@ -35,46 +39,36 @@ def graphql_recurring_format(json: dict) -> list[Issue]:
   nodes = json["data"]["node"]["items"]["nodes"]
   for node in nodes:
     try:
-      issue = node["status"]["item"]["content"]
       if node["status"]["name"] == "定期タスク":
-        data = Issue(
-          id=issue["id"],
-          body=issue["body"],
-          title=issue["title"],
-          repository=issue["repository"]["name"]
-          ) 
-        if node["cron"] != None:
-          data.trigger =  node["cron"].get("text")
-        if node["objective"] != None:
-          data.objective = Objective(node["objective"].get("optionId"), node["objective"].get("name"))
-        if len(issue["assignees"]["nodes"]) > 0:
-          data.assignee = issue["assignees"]["nodes"][0][
-             "login"
-          ] 
-        if node["recurring_end_date"] != None:
-          data.recurring_end_date = int(node["recurring_end_date"].get("number"))
+        data = Issue(node)
         format_data.append(data)
-    except TypeError as e:
+    except (TypeError, KeyError):
       # 期限が設定されていないIssueはスキップ
       continue
   return format_data
 
 def get_fields_id_map(json:dict) -> dict:
+  """
+  fieldのidとnameをmapping
+  """
   fields_map: dict[str,str] = {}
   nodes = json["data"]["node"]["fields"]["nodes"]
   for node in nodes:
     if "id" in node:
       fields_map[node["name"]] = node["id"]
   egdes = json["data"]["node"]["fields"]["edges"]
-  for egde in egdes:
-    if "id" in egde["node"]:
-      fields_map[egde["node"]["name"]] = egde["node"]["id"]
+  for edge in egdes:
+    if "id" in edge["node"]:
+      fields_map[edge["node"]["name"]] = edge["node"]["id"]
   
   return fields_map
 
 
 def create_recurring_tasks():
-    fields_info = get_fields_info()
+    """
+    定期タスクの自動追加メイン処理
+    """
+    fields_info = get_fields()
     target_status = graphql_status_format(fields_info, "Todo")
     # issue取得時にfieldがnullで入っているとfield_idの取得が困難なため始めにmapping
     fields_id_map = get_fields_id_map(fields_info)

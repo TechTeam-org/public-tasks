@@ -1,4 +1,4 @@
-from .constants import GH_PROJECT_ID, GH_TOKEN, GH_OWNER
+from .constants import GH_PROJECT_ID, GH_TOKEN
 from .models import Issue, Status
 from jinja2 import Template
 from loguru import logger
@@ -59,9 +59,9 @@ def get_issues() -> dict:
         logger.info(f"Github Response Code: {response.status_code}")
         return response.json()
 
-def get_fields_info() -> dict:
+def get_fields() -> dict:
   """
-  GraphQLを使ってGitHubProjectからIssue情報を取得する
+  GraphQLを使ってGitHubProjectからfield情報を取得する
   """
   headers = {"Authorization": f"bearer {GH_TOKEN}"}
   url = "https://api.github.com/graphql"
@@ -69,7 +69,7 @@ def get_fields_info() -> dict:
     {
       node(id: "{{PROJECT_ID}}") {
         ... on ProjectV2 {
-          fields(first: 100) { # 10は取得するフィールドの数、必要に応じて変更してください
+          fields(first: 100) {
             nodes{
                 ... on ProjectV2Field{
                     id
@@ -175,12 +175,14 @@ def get_recurring_issues() -> dict:
         return response.json()
 
 def create_issue(issue: Issue) -> dict:
-
+  """
+    github projectにrestでissueのcreateをする
+  """
   headers = {
     "Authorization": f"bearer {GH_TOKEN}",
     "Accept": "application/vnd.github.v3+json"
   }
-  url = f"https://api.github.com/repos/{GH_OWNER}/{issue.repository}/issues"
+  url = f"https://api.github.com/repos/TechTeam-org/{issue.repository}/issues"
   payload = {
     "title": issue.title,
     "body": issue.body,

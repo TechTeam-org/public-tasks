@@ -9,9 +9,6 @@ on:
 
 jobs:
   scheduled_issues_report:
-    permissions:
-      contents: 'read'
-      id-token: 'write'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,12 +34,9 @@ jobs:
           cache: 'pip'
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: checkoutput
-        run: echo ${{ steps.get_env.outputs.deploy }}
       - name: Run Python
         run: python dispatch.py copy_recurring
         env:
           WF_ENV: ${{ steps.get_env.outputs.deploy }} 
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
           GH_PROJECT_ID: ${{ secrets.GH_PROJECT_ID }}
-          GH_OWNER: ${{ secrets.GH_OWNER }}
