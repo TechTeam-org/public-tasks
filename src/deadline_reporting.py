@@ -1,6 +1,6 @@
 from .constants import ASSIGNEE2SLACK_ID, WF_ENV
 from .post_slack_message import post_slack_message
-from .github_api import get_issues
+from .github_api import get_issues, get_recurring_issues
 from loguru import logger
 import datetime
 import time
@@ -22,7 +22,7 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
                 "login"
             ]
             objective = node["objective"]["name"]
-        except TypeError:
+        except (KeyError, TypeError):
             # 期限が設定されていないIssueはスキップ
             continue
         if is_closed:

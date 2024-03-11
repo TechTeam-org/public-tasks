@@ -7,4 +7,7 @@ GH_PROJECT_ID = os.environ.get("GH_PROJECT_ID", "xxxxxxxxxx")
 
 ASSIGNEE2SLACK_ID = {
     "suguru-toyohara": "U06GE1X4BJ7",
+    "leo-KaiD": "U06EMEJP09Z",
+    "Daiki-Ishii": "U06E72K31ST",
+    "m-chiaki": "U06EJLVG869",
 }
