@@ -3,7 +3,6 @@ from .models import Issue, Status
 from jinja2 import Template
 from loguru import logger
 import requests
-import json
 
 def get_issues() -> dict:
     """
