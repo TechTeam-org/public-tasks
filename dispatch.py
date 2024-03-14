@@ -1,5 +1,6 @@
 import sys
 from src.copy_recurring_tasks import create_recurring_tasks
+from src.review_tasks_reporting import report_review_tasks
 from src.deadline_reporting import deadline_reporting
 
 from loguru import logger
@@ -11,5 +12,7 @@ match app_name:
         deadline_reporting()
     case 'copy_recurring':
         create_recurring_tasks()
+    case 'review_tasks_report':
+        report_review_tasks()
     case _:
         logger.info("couldn't find application, please set valid app_name")
