@@ -35,9 +35,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run Python
-        run: python dispatch.py issue_report
+        run: python dispatch.py copy_recurring
         env:
           WF_ENV: ${{ steps.get_env.outputs.deploy }} 
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
           GH_PROJECT_ID: ${{ secrets.GH_PROJECT_ID }}
-          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
