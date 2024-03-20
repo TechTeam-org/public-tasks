@@ -13,14 +13,16 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
     format_data = []
     nodes = json["data"]["node"]["items"]["nodes"]
     for node in nodes:
+        assignee = ""
         try:
             due_date = node["deadlines"]["date"]
             issue_url = node["deadlines"]["item"]["content"]["bodyUrl"]
             title = node["deadlines"]["item"]["content"]["title"]
             is_closed = node["deadlines"]["item"]["content"]["closed"]
-            assignee = node["deadlines"]["item"]["content"]["assignees"]["nodes"][0][
-                "login"
-            ]
+            if node["deadlines"]["item"]["content"]["assignees"]["nodes"] != []:
+                assignee = node["deadlines"]["item"]["content"]["assignees"]["nodes"][0][
+                    "login"
+                ]
             objective = node["objective"]["name"]
         except (KeyError, TypeError):
             # 期限が設定されていないIssueはスキップ

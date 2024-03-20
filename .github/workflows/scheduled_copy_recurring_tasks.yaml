@@ -3,9 +3,6 @@ on:
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron:  '28 0 * * *'
-  pull_request:
-    branches:
-      - main
 
 jobs:
   scheduled_issues_report:
