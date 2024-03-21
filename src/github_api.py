@@ -43,6 +43,11 @@ def get_issues() -> dict:
                   }
                 }
               }
+              status: fieldValueByName(name: "Status") {
+                ... on ProjectV2ItemFieldSingleSelectValue {
+                    name
+                }
+              }
             }
           }
         }

@@ -24,6 +24,7 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
                     "login"
                 ]
             objective = node["objective"]["name"]
+            status = node["status"]["name"]
         except (KeyError, TypeError):
             # 期限が設定されていないIssueはスキップ
             continue
@@ -37,6 +38,7 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
                 "title": title,
                 "assignee": assignee,
                 "objective": objective,
+                "status": status
             }
         )
 
@@ -144,14 +146,24 @@ def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, l
 
     return messages
 
+def filter_issues(issues: list[dict[str, str]]) -> list[dict[str, str]]:
+    rt: list[dict[str,str]] = []
+    for issue in issues:
+        if issue["status"] == "Done":
+            continue
+
+        rt.append(issue)
+    return rt
+
 
 def deadline_reporting():
     """
     メイン処理
     """
     format_issues = graphql_format(get_issues())
-    format_issues.sort(key=lambda x: x["due_date"])
-    messages = make_slack_messages(format_issues)
+    filtered_issues = filter_issues(format_issues)
+    filtered_issues.sort(key=lambda x: x["due_date"])
+    messages = make_slack_messages(filtered_issues)
     for message in messages:
         time.sleep(1)
         post_slack_message(message)
