@@ -1,3 +1,4 @@
+from typing import Tuple
 from .constants import ASSIGNEE2SLACK_ID, WF_ENV
 from .post_slack_message import post_slack_message
 from .github_api import get_issues, get_recurring_issues
@@ -49,7 +50,7 @@ def make_report(
     issue_url: str, assignee: str, deadline: str, title: str, objective: str
 ) -> list[dict[str, list] | None]:
     """
-    Slackに送信するレポートメッセージを作成する
+    InProgressとTodoのtaskをSlackに送信するレポートメッセージを作成する
     """
     deadline_date = datetime.datetime.strptime(deadline, "%Y-%m-%d")
     today = datetime.datetime.today()
@@ -99,7 +100,7 @@ def make_report(
 
 def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, list]]:
     """
-    Slackに連投するメッセージ群を作成する
+        InProgressとTodoとのissueをSlackに連投するメッセージ群を作成する
     """
     if WF_ENV == "dev":
         dev_message = "【テスト通知】"
@@ -149,9 +150,8 @@ def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, l
 def filter_issues(issues: list[dict[str, str]]) -> list[dict[str, str]]:
     rt: list[dict[str,str]] = []
     for issue in issues:
-        if issue["status"] == "Done":
+        if issue["status"] == "Done" or issue["status"] == "Review":
             continue
-
         rt.append(issue)
     return rt
 
@@ -161,6 +161,7 @@ def deadline_reporting():
     メイン処理
     """
     format_issues = graphql_format(get_issues())
+    # 完了しているもの出されているものは通知しない
     filtered_issues = filter_issues(format_issues)
     filtered_issues.sort(key=lambda x: x["due_date"])
     messages = make_slack_messages(filtered_issues)

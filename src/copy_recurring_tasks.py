@@ -1,6 +1,5 @@
 from .github_api import get_recurring_issues, create_issue, register_v2_item, get_fields, update_v2_select_field, update_v2_date_field
-from loguru import logger
-from .models import Issue, Status, Objective
+from .models import Issue, Status
 from datetime import datetime, timedelta
 import pytz
 
