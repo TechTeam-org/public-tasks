@@ -69,9 +69,9 @@ def make_report(
     assignee_message =  f"*担当者:*",
     for v in assignees:
         try:
-            assignee_message + f"\n<@{ASSIGNEE2SLACK_ID[v]}>"
+            assignee_message = assignee_message + f"\n<@{ASSIGNEE2SLACK_ID[v]}>"
         except KeyError:
-            assignee_message + f"\n{v}"
+            assignee_message = assignee_message + f"\n{v}"
         
 
     return [
