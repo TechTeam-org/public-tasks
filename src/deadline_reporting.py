@@ -14,16 +14,15 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
     format_data = []
     nodes = json["data"]["node"]["items"]["nodes"]
     for node in nodes:
-        assignee = ""
+        assignees = []
         try:
             due_date = node["deadlines"]["date"]
             issue_url = node["deadlines"]["item"]["content"]["bodyUrl"]
             title = node["deadlines"]["item"]["content"]["title"]
             is_closed = node["deadlines"]["item"]["content"]["closed"]
             if node["deadlines"]["item"]["content"]["assignees"]["nodes"] != []:
-                assignee = node["deadlines"]["item"]["content"]["assignees"]["nodes"][0][
-                    "login"
-                ]
+                for assignee in node["deadlines"]["item"]["content"]["assignees"]["nodes"]:
+                    assignees.append(assignee["login"])
             objective = node["objective"]["name"]
             status = node["status"]["name"]
         except (KeyError, TypeError):
@@ -37,7 +36,7 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
                 "due_date": due_date,
                 "issue_url": issue_url,
                 "title": title,
-                "assignee": assignee,
+                "assignees": assignees,
                 "objective": objective,
                 "status": status
             }
@@ -47,7 +46,7 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
 
 
 def make_report(
-    issue_url: str, assignee: str, deadline: str, title: str, objective: str
+    issue_url: str, assignees: list[str], deadline: str, title: str, objective: str
 ) -> list[dict[str, list] | None]:
     """
     InProgressとTodoのtaskをSlackに送信するレポートメッセージを作成する
@@ -66,11 +65,14 @@ def make_report(
         deadline = f"*あと{days_to_deadline}日* :warning:"
     else:
         return []
-
-    try:
-        slack_mention = f"<@{ASSIGNEE2SLACK_ID[assignee]}>"
-    except KeyError:
-        slack_mention = assignee
+    
+    assignee_message =  f"*担当者:*",
+    for v in assignees:
+        try:
+            assignee_message + f"\n<@{ASSIGNEE2SLACK_ID[v]}>"
+        except KeyError:
+            assignee_message + f"\n{v}"
+        
 
     return [
         {
@@ -88,7 +90,7 @@ def make_report(
                         {"type": "mrkdwn", "text": f"*締め切り:*\n{deadline}"},
                         {
                             "type": "mrkdwn",
-                            "text": f"*担当者:*\n{slack_mention}",
+                            "text": assignee_message,
                         },
                     ],
                 },
@@ -124,7 +126,7 @@ def make_slack_messages(format_issues: list[dict[str, str]]) -> list[dict[str, l
     for issue in format_issues:
         messages += make_report(
             issue["issue_url"],
-            issue["assignee"],
+            issue["assignees"],
             issue["due_date"],
             issue["title"],
             issue["objective"],

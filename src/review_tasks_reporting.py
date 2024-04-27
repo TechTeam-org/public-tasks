@@ -115,16 +115,15 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
     format_data = []
     nodes = json["data"]["node"]["items"]["nodes"]
     for node in nodes:
-        assignee = ""
+        assignees = []
         try:
             due_date = node["deadlines"]["date"]
             issue_url = node["deadlines"]["item"]["content"]["bodyUrl"]
             title = node["deadlines"]["item"]["content"]["title"]
             is_closed = node["deadlines"]["item"]["content"]["closed"]
             if node["deadlines"]["item"]["content"]["assignees"]["nodes"] != []:
-                assignee = node["deadlines"]["item"]["content"]["assignees"]["nodes"][0][
-                    "login"
-                ]
+                for assignee in node["deadlines"]["item"]["content"]["assignees"]["nodes"]:
+                    assignees.append(assignee["login"])
             objective = node["objective"]["name"]
             status = node["status"]["name"]
         except (KeyError, TypeError):
@@ -138,7 +137,7 @@ def graphql_format(json: dict) -> list[dict[str, str]]:
                 "due_date": due_date,
                 "issue_url": issue_url,
                 "title": title,
-                "assignee": assignee,
+                "assignees": assignees,
                 "objective": objective,
                 "status": status
             }

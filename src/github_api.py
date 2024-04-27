@@ -31,7 +31,7 @@ def get_issues() -> dict:
                           bodyUrl
                           closed
                           title
-                          assignees(first: 1){
+                          assignees(first: 3){
                             nodes{
                               login
                             }
