@@ -66,7 +66,7 @@ def make_report(
     else:
         return []
     
-    assignee_message = f"*担当者:*",
+    assignee_message = f"*担当者:*"
     for v in assignees:
         try:
             assignee_message += f"\n<@{ASSIGNEE2SLACK_ID[v]}>"
